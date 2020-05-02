@@ -5,20 +5,20 @@ import { gql } from 'apollo-boost';
 
 const QUERY_USERS = gql`
 query {
-  users {
+  companies {
     id
     name
-    lastName
+    isEnabled
   }
 }
 `;
 
 const CREATE_USER = gql`
-mutation createUser ($name: String!, $lastName: String!){
-  createUser (name: $name, lastName: $lastName){
+mutation createCompany ($name: String!, $isEnabled: Boolean!){
+  createCompany (name: $name, isEnabled: $isEnabled){
     id
     name
-    lastName
+    isEnabled
   }
 }
 `;
@@ -28,14 +28,14 @@ export function UserInfo() {
 
   // Polling: rovides near-real-time synchronization with your server
   // by causing a query to execute periodically at a specified interval
-  const { data, loading } = useQuery(QUERY_USERS, { pollInterval: 500 });
+  const { data, loading } = useQuery(QUERY_USERS);
   // should handle loading status
   if (loading) return <p>Loading...</p>;
 
-  return data.users.map(({ id, name, lastName }) => (
-    <div key={ id }>
+  return data.companies.map(({ id, name, isEnabled }) => (
+    <div key={id}>
       <p>
-        User - { id }: { name } { lastName }
+        User - {id}: {name} {isEnabled}
       </p>
     </div>
   ));
@@ -43,23 +43,23 @@ export function UserInfo() {
 
 export function CreateUser() {
 
-  let inputName, inputLastName;
-  const [createUser, { data }  ] = useMutation(CREATE_USER);
+  let inputName;
+  const [createUser, { data }] = useMutation(CREATE_USER);
 
   return (
     <div>
       <form
         onSubmit={e => {
           e.preventDefault();
-          createUser({ variables: {
+          createUser({
+            variables: {
               name: inputName.value,
-              lastName: inputLastName.value 
-          } });
+              isEnabled: true
+            }
+          });
           inputName.value = '';
-          inputLastName.value = '';
-          window.location.reload();
         }}
-        style = {{ marginTop: '2em', marginBottom: '2em' }}
+        style={{ marginTop: '2em', marginBottom: '2em' }}
       >
         <label>Name: </label>
         <input
@@ -69,14 +69,7 @@ export function CreateUser() {
           style={{ marginRight: '1em' }}
         />
 
-        <label>Last Name: </label>
-        <input
-          ref={node => {
-            inputLastName = node;
-          }}
-          style={{ marginRight: '1em' }}
-        />
-        <button type="submit" style={{ cursor: 'pointer' }}>Add a User</button>
+        <button type="submit" style={{ cursor: 'pointer' }}>Add a Company</button>
       </form>
     </div>
   );

@@ -59,7 +59,7 @@ class CreateCompany(graphene.Mutation):
 
 
 class Mutation(AuthRelayMutation, graphene.ObjectType):
-    create_user = CreateCompany.Field()
+    create_company = CreateCompany.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)

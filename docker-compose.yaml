@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+
+  webapp:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - "./frontend/app/src:/app/src"
+      - "./frontend/app/public:/app/public"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    environment:
+      - DEBUG=True
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./backend/myproject:/app"
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dev
+
+  redis:
+    image: redis:6.0.1-alpine
+    ports:
+      - "6379:6379"

@@ -12,3 +12,4 @@ Rx==1.6.1
 singledispatch==3.4.0.3
 six==1.13.0
 sqlparse==0.3.0
+psycopg2==1.1.21

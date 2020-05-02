@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "graphene_django",
     "myapp",
+    "graphql_auth",
+    "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
 ]
 
 MIDDLEWARE = [
@@ -80,7 +82,7 @@ WSGI_APPLICATION = "myproject.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "myproject-dev",
+        "NAME": "postgres",
         "USER": "postgres",
         "PASSWORD": "postgres",
         "HOST": "postgres",
@@ -92,14 +94,14 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-    },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+#     },
+#     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+#     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+#     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+# ]
 
 
 # Internationalization
@@ -122,6 +124,39 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 
-GRAPHENE = {"SCHEMA": "myapp.schema.schema"}
+GRAPHENE = {
+    "SCHEMA": "myapp.schema.schema",
+    "MIDDLEWARE": ["graphql_jwt.middleware.JSONWebTokenMiddleware"],
+}
 
 CORS_ORIGIN_WHITELIST = ["http://localhost:3000", "http://127.0.0.1:3000"]
+
+AUTH_USER_MODEL = "myapp.CustomUser"
+
+GRAPHQL_JWT = {
+    "JWT_VERIFY_EXPIRATION": False,
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+    "JWT_ALLOW_ANY_CLASSES": [
+        "graphql_auth.relay.Register",
+        "graphql_auth.relay.VerifyAccount",
+        "graphql_auth.relay.ResendActivationEmail",
+        "graphql_auth.relay.SendPasswordResetEmail",
+        "graphql_auth.relay.PasswordReset",
+        "graphql_auth.relay.ObtainJSONWebToken",
+        "graphql_auth.relay.VerifyToken",
+        "graphql_auth.relay.RefreshToken",
+        "graphql_auth.relay.RevokeToken",
+        "graphql_auth.relay.VerifySecondaryEmail",
+    ],
+}
+
+GRAPHQL_AUTH = {
+    "LOGIN_ALLOWED_FIELDS": ["email"],
+    "SEND_ACTIVATION_EMAIL": False,
+    "REGISTER_MUTATION_FIELDS": ["email", "first_name", "last_name"],
+}
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]

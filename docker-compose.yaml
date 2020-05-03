@@ -21,6 +21,7 @@ services:
     build:
       context: ./backend
       dockerfile: ./Dockerfile
+    command: ["./start.sh", "10", "python", "manage.py", "runserver", "0.0.0.0:8000"]
     environment:
       - DEBUG=True
     ports:

@@ -1,6 +1,7 @@
 from graphene_django import DjangoObjectType
 import graphene
 from myapp.models import Company
+from django.contrib.auth.models import AnonymousUser
 
 from graphql_auth.schema import UserQuery, MeQuery
 from graphql_auth import relay
@@ -37,7 +38,9 @@ class Query(UserQuery, MeQuery, graphene.ObjectType):
     companies = graphene.List(CompanyType)
 
     def resolve_companies(self, info):
-        return Company.objects.all()
+        if info.context.user.is_authenticated:
+            return Company.objects.all()
+        return []
 
 
 class CreateCompany(graphene.Mutation):
@@ -50,6 +53,8 @@ class CreateCompany(graphene.Mutation):
         is_enabled = graphene.Boolean()
 
     def mutate(self, info, name, is_enabled):
+        if not info.context.user.is_authenticated:
+            raise Exception("Needs login")
         company = Company(name=name, is_enabled=is_enabled)
         company.save()
 

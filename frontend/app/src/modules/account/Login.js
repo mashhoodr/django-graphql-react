@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Card, Form, Input, Button, Typography } from 'antd';
 import { gql } from 'apollo-boost';
 import { useMutation } from 'react-apollo';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 const { Text } = Typography;
 
@@ -49,13 +49,14 @@ export const Login = () => {
         console.log('Failed:', errorInfo);
     };
 
+    if (data && data.tokenAuth && data.tokenAuth.success) {
+        localStorage.setItem('token', data.tokenAuth.token);
+        console.log("Setting data: ", data);
+        return <Redirect to="dashboard" />
+    }
+
     return (
         <Row align="middle" justify="center" style={{ height: '100%' }}>
-            { /** TODO store in localstorage? */}
-            {data ? <Card title="Data">
-                <pre>{JSON.stringify(data)}</pre>
-            </Card> : null}
-
             <Card title="Login" bordered={true} style={{ width: 300 }}>
                 <Form
                     {...layout}

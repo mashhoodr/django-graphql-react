@@ -25,7 +25,7 @@ SECRET_KEY = "7z0y+b-*y7cve37qy+$!xnmgg1yxxxzk8(0evo=##n2=d#7leq"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -129,7 +129,11 @@ GRAPHENE = {
     "MIDDLEWARE": ["graphql_jwt.middleware.JSONWebTokenMiddleware"],
 }
 
-CORS_ORIGIN_WHITELIST = ["http://localhost:3000", "http://127.0.0.1:3000"]
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost.com:3000",
+]
 
 AUTH_USER_MODEL = "myapp.CustomUser"
 
@@ -153,6 +157,7 @@ GRAPHQL_JWT = {
 GRAPHQL_AUTH = {
     "LOGIN_ALLOWED_FIELDS": ["email"],
     "SEND_ACTIVATION_EMAIL": False,
+    "ALLOW_LOGIN_NOT_VERIFIED": True,
     "REGISTER_MUTATION_FIELDS": ["email", "first_name", "last_name"],
 }
 

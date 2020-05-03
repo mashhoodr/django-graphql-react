@@ -2,6 +2,15 @@ import React from 'react';
 import { useQuery, useMutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 
+const QUERY_ME = gql`
+query {
+  me {
+    email,
+    firstName,
+    lastName
+  }
+}
+`
 
 const QUERY_USERS = gql`
 query {

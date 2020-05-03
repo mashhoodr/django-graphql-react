@@ -5,7 +5,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Redirect
 } from "react-router-dom";
 
 import { Dashboard } from './modules/dashboard/Dashboard';
@@ -14,11 +14,46 @@ import { Signup } from './modules/account/Signup';
 
 import { Layout, Menu } from 'antd';
 
+import { UserInfo, CreateUser } from './User'
+
 const { Header, Content, Footer } = Layout;
 
 const client = new ApolloClient({
   uri: 'http://localhost:8000/graphql/',
+  request: async operation => {
+    // Get JWT token from local storage
+    // Cookie is also configured on the server, to be tested on staging.
+    const token = window.localStorage.getItem('token')
+
+    // Pass token to headers
+    operation.setContext({
+      headers: {
+        Authorization: token ? `JWT ${token}` : ''
+      }
+    })
+  }
 });
+
+const ProtectedRoute = ({ component: Component, ...rest }) => {
+  const isUserLoggedIn = window.localStorage.getItem('token')
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        isUserLoggedIn ? (
+          <Component {...props} />
+        ) : (
+            <Redirect
+              to={{
+                pathname: `login`,
+                state: { from: rest.path }
+              }}
+            />
+          )
+      }
+    />
+  );
+};
 
 const routes = (
   <Switch>
@@ -28,9 +63,10 @@ const routes = (
     <Route path="/signup">
       <Signup />
     </Route>
-    <Route path="/dashboard">
-      <Dashboard />
-    </Route>
+    <ProtectedRoute
+      path="/dashboard"
+      component={() => <Dashboard />}
+    />
     <Route path="/">
       <Login />
     </Route>

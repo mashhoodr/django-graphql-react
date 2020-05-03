@@ -3,12 +3,17 @@
 Introduce how to use GraphQL to connect Django and React
 
 ## Audience
-The project is intended for engineers who want to know how to use GraphQL to connect Django and React. There is a basic GraphQL server in backend directory and GraphQL client in frontend directory. If you want to know the details, you can read the following Medium articles.
+The project is intended for engineers who want to know how to use GraphQL to connect Django and React. There is a basic GraphQL server in backend directory and GraphQL client in frontend directory.
 
 ## Backend
 - Directory: backend
 - Language: Python3
 - Framework: Django with Graphene and django-graphql-auth
+
+While this project uses Graphene, it is now advised to look into
+https://ariadnegraphql.org/
+https://tartiflette.io/
+when starting out as well.
 
 ## Frontend
 - Directory: frontend
